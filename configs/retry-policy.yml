@@ -1,0 +1,76 @@
+retry_policies:
+  default:
+    max_attempts: 3
+    backoff_strategy: exponential
+    backoff_base_ms: 1000
+    backoff_max_ms: 30000
+    jitter: true
+    retry_on:
+      - TransientError
+      - NetworkTimeout
+      - RateLimitExceeded
+    no_retry_on:
+      - ValidationError
+      - AuthorizationError
+      - ResourceNotFound
+      - PermanentFailure
+
+  aggressive:
+    max_attempts: 5
+    backoff_strategy: exponential
+    backoff_base_ms: 500
+    backoff_max_ms: 60000
+    jitter: true
+    retry_on:
+      - TransientError
+      - NetworkTimeout
+      - RateLimitExceeded
+      - ServiceUnavailable
+    no_retry_on:
+      - ValidationError
+      - AuthorizationError
+
+  conservative:
+    max_attempts: 2
+    backoff_strategy: fixed
+    backoff_base_ms: 5000
+    jitter: false
+    retry_on:
+      - TransientError
+    no_retry_on:
+      - ValidationError
+      - AuthorizationError
+      - ResourceNotFound
+      - RateLimitExceeded
+      - PermanentFailure
+
+  notification:
+    max_attempts: 10
+    backoff_strategy: linear
+    backoff_base_ms: 2000
+    backoff_max_ms: 120000
+    jitter: true
+    retry_on:
+      - DeliveryFailed
+      - ProviderUnavailable
+      - RateLimitExceeded
+    no_retry_on:
+      - InvalidRecipient
+      - UnsubscribedRecipient
+
+job_type_overrides:
+  "ingestion.file_import":
+    policy: conservative
+    timeout_seconds: 600
+  "notification.email":
+    policy: notification
+    timeout_seconds: 30
+  "export.report_generate":
+    policy: default
+    timeout_seconds: 900
+
+dead_letter_thresholds:
+  default_max_attempts_before_dlq: 3
+  dlq_requeue_enabled: true
+  dlq_requeue_delay_hours: 24
+  dlq_max_requeue_attempts: 2

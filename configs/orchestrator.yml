@@ -1,0 +1,67 @@
+orchestrator:
+  name: "workflow-orchestrator"
+  environment: "${ENVIRONMENT}"
+  region: "${DEPLOY_REGION}"
+
+  executor:
+    concurrency:
+      default_workers: 10
+      max_workers: 50
+      per_job_type_limits:
+        ingestion: 5
+        notification: 20
+        export: 3
+        enrichment: 10
+    timeout_defaults:
+      job_timeout_seconds: 300
+      workflow_timeout_seconds: 3600
+    heartbeat_interval_seconds: 30
+
+  queue:
+    backend: "${QUEUE_BACKEND}"  # redis | sqs | rabbitmq
+    connection_string: "${QUEUE_CONNECTION_STRING}"
+    default_queue: "workflow.default"
+    priority_queues:
+      - name: "workflow.critical"
+        weight: 10
+      - name: "workflow.standard"
+        weight: 5
+      - name: "workflow.background"
+        weight: 1
+    dead_letter_queue: "workflow.dlq"
+    visibility_timeout_seconds: 60
+
+  state_store:
+    backend: "${STATE_STORE_BACKEND}"  # postgres | dynamodb | redis
+    connection_string: "${STATE_STORE_CONNECTION_STRING}"
+    schema: "workflow_ops"
+    lock_ttl_seconds: 120
+    checkpoint_interval: 10
+
+  event_bus:
+    backend: "${EVENT_BUS_BACKEND}"  # kafka | eventbridge | pubsub
+    connection_string: "${EVENT_BUS_CONNECTION_STRING}"
+    default_topic: "workflow.events"
+    consumer_group: "${SERVICE_NAME}-consumer"
+    publish_retries: 3
+
+  observability:
+    tracing:
+      enabled: true
+      exporter: "${TRACING_EXPORTER}"  # otlp | jaeger | datadog
+      endpoint: "${TRACING_ENDPOINT}"
+      sample_rate: 0.1
+    metrics:
+      enabled: true
+      exporter: "${METRICS_EXPORTER}"
+      push_interval_seconds: 15
+    logging:
+      level: "${LOG_LEVEL}"  # debug | info | warn | error
+      format: "json"
+      include_correlation_id: true
+
+  security:
+    tenant_isolation: strict
+    payload_encryption: "${PAYLOAD_ENCRYPTION_ENABLED}"
+    encryption_key_ref: "${KMS_KEY_ARN}"
+    audit_log_enabled: true

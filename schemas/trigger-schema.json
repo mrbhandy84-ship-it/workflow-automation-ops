@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/workflow/trigger/v1",
+  "title": "TriggerDefinition",
+  "description": "Schema for declarative trigger configurations that initiate workflow execution.",
+  "type": "object",
+  "required": ["trigger_id", "trigger_type", "target_workflow", "enabled"],
+  "properties": {
+    "trigger_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": ["event", "schedule", "webhook", "manual", "dependency"],
+      "description": "Mechanism that activates this trigger."
+    },
+    "target_workflow": {
+      "type": "string",
+      "description": "Registered workflow identifier to execute when this trigger fires."
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "tenant_id": { "type": "string" },
+    "conditions": {
+      "type": "array",
+      "description": "Filter conditions evaluated before the trigger fires.",
+      "items": {
+        "type": "object",
+        "required": ["field", "operator", "value"],
+        "properties": {
+          "field": { "type": "string" },
+          "operator": { "type": "string", "enum": ["eq", "neq", "gt", "lt", "in", "not_in", "exists"] },
+          "value": {}
+        }
+      }
+    },
+    "event_config": {
+      "type": "object",
+      "description": "Populated when trigger_type is 'event'.",
+      "properties": {
+        "event_types": { "type": "array", "items": { "type": "string" } },
+        "source_filter": { "type": "string" }
+      }
+    },
+    "schedule_config": {
+      "type": "object",
+      "description": "Populated when trigger_type is 'schedule'.",
+      "properties": {
+        "cron_expression": { "type": "string" },
+        "timezone": { "type": "string" },
+        "start_date": { "type": "string", "format": "date" },
+        "end_date": { "type": "string", "format": "date" }
+      }
+    },
+    "webhook_config": {
+      "type": "object",
+      "description": "Populated when trigger_type is 'webhook'.",
+      "properties": {
+        "path_suffix": { "type": "string" },
+        "auth_strategy": { "type": "string", "enum": ["hmac", "bearer", "api_key", "none"] },
+        "idempotency_header": { "type": "string" }
+      }
+    },
+    "payload_mapping": {
+      "type": "object",
+      "description": "JSONPath or key mapping to extract workflow input from trigger payload."
+    },
+    "throttle": {
+      "type": "object",
+      "properties": {
+        "max_per_minute": { "type": "integer" },
+        "burst_limit": { "type": "integer" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

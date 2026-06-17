@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/workflow/job/v1",
+  "title": "JobDefinition",
+  "description": "Schema for a discrete unit of work submitted to the execution layer.",
+  "type": "object",
+  "required": ["job_id", "job_type", "status", "created_at", "payload"],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "job_type": {
+      "type": "string",
+      "description": "Registered job class identifier. Must map to a known handler in the executor registry."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "queued", "running", "completed", "failed", "dead_lettered", "cancelled"]
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "default": 5,
+      "description": "Execution priority. Higher values processed first within the same queue."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scheduled_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "If set, job will not be dequeued before this time."
+    },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "tenant_id": { "type": "string" },
+    "workflow_id": {
+      "type": "string",
+      "description": "Parent workflow execution this job belongs to, if any."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Job-type-specific input data."
+    },
+    "result": {
+      "type": "object",
+      "description": "Output or error detail populated on terminal status."
+    },
+    "retry_policy": {
+      "type": "object",
+      "properties": {
+        "max_attempts": { "type": "integer", "minimum": 1 },
+        "backoff_strategy": { "type": "string", "enum": ["fixed", "linear", "exponential"] },
+        "backoff_base_ms": { "type": "integer" },
+        "retry_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Error class names or codes that trigger a retry."
+        }
+      }
+    },
+    "timeout_seconds": { "type": "integer", "minimum": 1 },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Deduplication key. Duplicate submissions with the same key are discarded."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}
