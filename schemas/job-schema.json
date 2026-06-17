@@ -2,7 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://schemas.internal/workflow/job/v1",
   "title": "JobDefinition",
-  "description": "Schema for a discrete unit of work submitted to the execution layer.",
   "type": "object",
   "required": ["job_id", "job_type", "status", "created_at", "payload"],
   "properties": {
@@ -11,8 +10,7 @@
       "format": "uuid"
     },
     "job_type": {
-      "type": "string",
-      "description": "Registered job class identifier. Must map to a known handler in the executor registry."
+      "type": "string"
     },
     "status": {
       "type": "string",
@@ -22,8 +20,7 @@
       "type": "integer",
       "minimum": 0,
       "maximum": 10,
-      "default": 5,
-      "description": "Execution priority. Higher values processed first within the same queue."
+      "default": 5
     },
     "created_at": {
       "type": "string",
@@ -31,23 +28,19 @@
     },
     "scheduled_at": {
       "type": "string",
-      "format": "date-time",
-      "description": "If set, job will not be dequeued before this time."
+      "format": "date-time"
     },
     "started_at": { "type": "string", "format": "date-time" },
     "completed_at": { "type": "string", "format": "date-time" },
     "tenant_id": { "type": "string" },
     "workflow_id": {
-      "type": "string",
-      "description": "Parent workflow execution this job belongs to, if any."
+      "type": "string"
     },
     "payload": {
-      "type": "object",
-      "description": "Job-type-specific input data."
+      "type": "object"
     },
     "result": {
-      "type": "object",
-      "description": "Output or error detail populated on terminal status."
+      "type": "object"
     },
     "retry_policy": {
       "type": "object",
@@ -57,15 +50,13 @@
         "backoff_base_ms": { "type": "integer" },
         "retry_on": {
           "type": "array",
-          "items": { "type": "string" },
-          "description": "Error class names or codes that trigger a retry."
+          "items": { "type": "string" }
         }
       }
     },
     "timeout_seconds": { "type": "integer", "minimum": 1 },
     "idempotency_key": {
-      "type": "string",
-      "description": "Deduplication key. Duplicate submissions with the same key are discarded."
+      "type": "string"
     },
     "tags": {
       "type": "array",

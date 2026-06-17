@@ -2,7 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://schemas.internal/workflow/trigger/v1",
   "title": "TriggerDefinition",
-  "description": "Schema for declarative trigger configurations that initiate workflow execution.",
   "type": "object",
   "required": ["trigger_id", "trigger_type", "target_workflow", "enabled"],
   "properties": {
@@ -12,12 +11,10 @@
     },
     "trigger_type": {
       "type": "string",
-      "enum": ["event", "schedule", "webhook", "manual", "dependency"],
-      "description": "Mechanism that activates this trigger."
+      "enum": ["event", "schedule", "webhook", "manual", "dependency"]
     },
     "target_workflow": {
-      "type": "string",
-      "description": "Registered workflow identifier to execute when this trigger fires."
+      "type": "string"
     },
     "enabled": {
       "type": "boolean",
@@ -26,7 +23,6 @@
     "tenant_id": { "type": "string" },
     "conditions": {
       "type": "array",
-      "description": "Filter conditions evaluated before the trigger fires.",
       "items": {
         "type": "object",
         "required": ["field", "operator", "value"],
@@ -39,7 +35,6 @@
     },
     "event_config": {
       "type": "object",
-      "description": "Populated when trigger_type is 'event'.",
       "properties": {
         "event_types": { "type": "array", "items": { "type": "string" } },
         "source_filter": { "type": "string" }
@@ -47,7 +42,6 @@
     },
     "schedule_config": {
       "type": "object",
-      "description": "Populated when trigger_type is 'schedule'.",
       "properties": {
         "cron_expression": { "type": "string" },
         "timezone": { "type": "string" },
@@ -57,7 +51,6 @@
     },
     "webhook_config": {
       "type": "object",
-      "description": "Populated when trigger_type is 'webhook'.",
       "properties": {
         "path_suffix": { "type": "string" },
         "auth_strategy": { "type": "string", "enum": ["hmac", "bearer", "api_key", "none"] },
@@ -65,8 +58,7 @@
       }
     },
     "payload_mapping": {
-      "type": "object",
-      "description": "JSONPath or key mapping to extract workflow input from trigger payload."
+      "type": "object"
     },
     "throttle": {
       "type": "object",

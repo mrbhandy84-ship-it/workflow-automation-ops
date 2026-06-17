@@ -1,67 +1,67 @@
 orchestrator:
-  name: "workflow-orchestrator"
-  environment: "${ENVIRONMENT}"
-  region: "${DEPLOY_REGION}"
+  name: "${ENV_VAR}"
+  environment: "${ENV_VAR}"
+  region: "${ENV_VAR}"
 
   executor:
     concurrency:
-      default_workers: 10
-      max_workers: 50
+      default_workers: REDACTED
+      max_workers: REDACTED
       per_job_type_limits:
-        ingestion: 5
-        notification: 20
-        export: 3
-        enrichment: 10
+        ingestion: REDACTED
+        notification: REDACTED
+        export: REDACTED
+        enrichment: REDACTED
     timeout_defaults:
-      job_timeout_seconds: 300
-      workflow_timeout_seconds: 3600
-    heartbeat_interval_seconds: 30
+      job_timeout_seconds: REDACTED
+      workflow_timeout_seconds: REDACTED
+    heartbeat_interval_seconds: REDACTED
 
   queue:
-    backend: "${QUEUE_BACKEND}"  # redis | sqs | rabbitmq
-    connection_string: "${QUEUE_CONNECTION_STRING}"
-    default_queue: "workflow.default"
+    backend: "${ENV_VAR}"
+    connection_string: "${ENV_VAR}"
+    default_queue: "${ENV_VAR}"
     priority_queues:
-      - name: "workflow.critical"
-        weight: 10
-      - name: "workflow.standard"
-        weight: 5
-      - name: "workflow.background"
-        weight: 1
-    dead_letter_queue: "workflow.dlq"
-    visibility_timeout_seconds: 60
+      - name: "${ENV_VAR}"
+        weight: REDACTED
+      - name: "${ENV_VAR}"
+        weight: REDACTED
+      - name: "${ENV_VAR}"
+        weight: REDACTED
+    dead_letter_queue: "${ENV_VAR}"
+    visibility_timeout_seconds: REDACTED
 
   state_store:
-    backend: "${STATE_STORE_BACKEND}"  # postgres | dynamodb | redis
-    connection_string: "${STATE_STORE_CONNECTION_STRING}"
-    schema: "workflow_ops"
-    lock_ttl_seconds: 120
-    checkpoint_interval: 10
+    backend: "${ENV_VAR}"
+    connection_string: "${ENV_VAR}"
+    schema: "${ENV_VAR}"
+    lock_ttl_seconds: REDACTED
+    checkpoint_interval: REDACTED
 
   event_bus:
-    backend: "${EVENT_BUS_BACKEND}"  # kafka | eventbridge | pubsub
-    connection_string: "${EVENT_BUS_CONNECTION_STRING}"
-    default_topic: "workflow.events"
-    consumer_group: "${SERVICE_NAME}-consumer"
-    publish_retries: 3
+    backend: "${ENV_VAR}"
+    connection_string: "${ENV_VAR}"
+    default_topic: "${ENV_VAR}"
+    consumer_group: "${ENV_VAR}"
+    publish_retries: REDACTED
 
   observability:
     tracing:
-      enabled: true
-      exporter: "${TRACING_EXPORTER}"  # otlp | jaeger | datadog
-      endpoint: "${TRACING_ENDPOINT}"
-      sample_rate: 0.1
+      enabled: REDACTED
+      exporter: "${ENV_VAR}"
+      endpoint: "${ENV_VAR}"
+      sample_rate: REDACTED
     metrics:
-      enabled: true
-      exporter: "${METRICS_EXPORTER}"
-      push_interval_seconds: 15
+      enabled: REDACTED
+      exporter: "${ENV_VAR}"
+      push_interval_seconds: REDACTED
     logging:
-      level: "${LOG_LEVEL}"  # debug | info | warn | error
-      format: "json"
-      include_correlation_id: true
+      level: "${ENV_VAR}"
+      format: REDACTED
+      include_correlation_id: REDACTED
 
   security:
-    tenant_isolation: strict
-    payload_encryption: "${PAYLOAD_ENCRYPTION_ENABLED}"
-    encryption_key_ref: "${KMS_KEY_ARN}"
-    audit_log_enabled: true
+    tenant_isolation: REDACTED
+    payload_encryption: "${ENV_VAR}"
+    encryption_key_ref: "${ENV_VAR}"
+    audit_log_enabled: REDACTED

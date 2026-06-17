@@ -1,63 +1,63 @@
 queues:
   default:
-    name: "workflow.default"
-    type: "standard"
-    max_message_size_kb: 256
-    message_retention_days: 4
-    visibility_timeout_seconds: 60
-    receive_wait_seconds: 20
+    name: "${ENV_VAR}"
+    type: REDACTED
+    max_message_size_kb: REDACTED
+    message_retention_days: REDACTED
+    visibility_timeout_seconds: REDACTED
+    receive_wait_seconds: REDACTED
 
   critical:
-    name: "workflow.critical"
-    type: "fifo"
-    max_message_size_kb: 256
-    message_retention_days: 7
-    visibility_timeout_seconds: 30
-    deduplication_scope: "messageGroup"
-    content_based_deduplication: false
+    name: "${ENV_VAR}"
+    type: REDACTED
+    max_message_size_kb: REDACTED
+    message_retention_days: REDACTED
+    visibility_timeout_seconds: REDACTED
+    deduplication_scope: REDACTED
+    content_based_deduplication: REDACTED
 
   background:
-    name: "workflow.background"
-    type: "standard"
-    max_message_size_kb: 256
-    message_retention_days: 2
-    visibility_timeout_seconds: 120
-    delay_seconds: 0
+    name: "${ENV_VAR}"
+    type: REDACTED
+    max_message_size_kb: REDACTED
+    message_retention_days: REDACTED
+    visibility_timeout_seconds: REDACTED
+    delay_seconds: REDACTED
 
   dead_letter:
-    name: "workflow.dlq"
-    type: "standard"
-    message_retention_days: 14
-    alarm_on_message_count: true
-    alarm_threshold: 1
-    alarm_notification_target: "${OPS_ALERT_TOPIC}"
+    name: "${ENV_VAR}"
+    type: REDACTED
+    message_retention_days: REDACTED
+    alarm_on_message_count: REDACTED
+    alarm_threshold: REDACTED
+    alarm_notification_target: "${ENV_VAR}"
 
 routing:
   rules:
-    - job_type_prefix: "ingestion."
-      target_queue: "workflow.default"
-      priority: 5
-    - job_type_prefix: "notification."
-      target_queue: "workflow.critical"
-      priority: 9
-    - job_type_prefix: "export."
-      target_queue: "workflow.background"
-      priority: 2
-    - job_type_prefix: "enrichment."
-      target_queue: "workflow.default"
-      priority: 4
-  default_target: "workflow.default"
+    - job_type_prefix: "${ENV_VAR}"
+      target_queue: "${ENV_VAR}"
+      priority: REDACTED
+    - job_type_prefix: "${ENV_VAR}"
+      target_queue: "${ENV_VAR}"
+      priority: REDACTED
+    - job_type_prefix: "${ENV_VAR}"
+      target_queue: "${ENV_VAR}"
+      priority: REDACTED
+    - job_type_prefix: "${ENV_VAR}"
+      target_queue: "${ENV_VAR}"
+      priority: REDACTED
+  default_target: "${ENV_VAR}"
 
 consumer_groups:
   orchestrator:
-    queues: ["workflow.critical", "workflow.default", "workflow.background"]
-    poll_interval_ms: 500
-    batch_size: 10
-    max_inflight: 50
+    queues: REDACTED
+    poll_interval_ms: REDACTED
+    batch_size: REDACTED
+    max_inflight: REDACTED
 
   dlq_processor:
-    queues: ["workflow.dlq"]
-    poll_interval_ms: 5000
-    batch_size: 5
-    max_inflight: 5
-    alert_on_receive: true
+    queues: REDACTED
+    poll_interval_ms: REDACTED
+    batch_size: REDACTED
+    max_inflight: REDACTED
+    alert_on_receive: REDACTED
